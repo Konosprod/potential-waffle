@@ -3,6 +3,15 @@ local gumbo = require 'gumbo'
 local lfs = require 'lfs'
 
 
+function rpairs(t)
+	return function(t, i)
+		i = i - 1
+		if i ~= 0 then
+			return i, t[i]
+		end
+	end, t, #t + 1
+end
+
 function getChapter(url)
     local res, code, headers, status = https.request(url)
     local doc =  gumbo.parse(res)
@@ -40,7 +49,7 @@ for i, element in ipairs(list:getElementsByTagName("li")) do
     table.insert(urls, href)
 end
 
-for k,url in pairs(urls) do
+for k,url in rpairs(urls) do
     print("Downloading : " .. url:sub(1, #url - 1):match("([^/]+)$"))
     getChapter(url)
 end
